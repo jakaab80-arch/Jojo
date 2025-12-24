@@ -1,165 +1,136 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دردشة فخمة</title>
-  <style>
+<style>
+    /* إعدادات عامة */
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    #loginBox, #chatContainer {
-      background: rgba(0,0,0,0.5);
-      padding: 20px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 500px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    input {
-      width: 80%;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 10px;
-      border: none;
-    }
-    button {
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: none;
-      background-color: #ff4f81;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    #chatBox {
-      width: 100%;
-      height: 60vh;
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 10px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-    }
-    .message {
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-      word-wrap: break-word;
-    }
-    .username {
-      font-weight: bold;
-      color: #ffd700;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- واجهة تسجيل الدخول -->
-  <div id="loginBox">
-    <h2>تسجيل الدخول</h2>
-    <input id="usernameInput" placeholder="اسم المستخدم الفريد">
-    <input id="passwordInput" type="password" placeholder="كلمة السر">
-    <button id="loginBtn">دخول</button>
-  </div>
-
-  <!-- واجهة الدردشة -->
-  <div id="chatContainer" style="display:none;">
-    <h2>دردشة فخمة</h2>
-    <div id="chatBox"></div>
-    <input id="messageInput" placeholder="اكتب رسالتك هنا">
-    <button id="sendBtn">إرسال</button>
-  </div>
-
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-analytics.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBrFzZJFWw2TmTkJpS3Ddfjly9laiJSN4o",
-      authDomain: "chats-6a209.firebaseapp.com",
-      databaseURL: "https://chats-6a209-default-rtdb.firebaseio.com/",
-      projectId: "chats-6a209",
-      storageBucket: "chats-6a209.firebasestorage.app",
-      messagingSenderId: "31959346746",
-      appId: "1:31959346746:web:1e204cb808bb3d63604f03",
-      measurementId: "G-3BQB3BLGN8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const database = getDatabase(app);
-
-    const loginBox = document.getElementById("loginBox");
-    const chatContainer = document.getElementById("chatContainer");
-    const usernameInput = document.getElementById("usernameInput");
-    const passwordInput = document.getElementById("passwordInput");
-    const loginBtn = document.getElementById("loginBtn");
-    const chatBox = document.getElementById("chatBox");
-    const messageInput = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
-
-    let currentUser = "";
-
-    // تسجيل الدخول
-    loginBtn.onclick = () => {
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-      if(username === "" || password === "") {
-        alert("الرجاء كتابة اسم المستخدم وكلمة السر");
-        return;
-      }
-      currentUser = username + "_" + Math.floor(Math.random() * 1000); // اسم فريد + رقم عشوائي
-      loginBox.style.display = "none";
-      chatContainer.style.display = "flex";
-    };
-
-    // إرسال رسالة
-    function sendMessage(text) {
-      if(text.trim() === "") return;
-      push(ref(database, "messages"), {
-        user: currentUser,
-        message: text,
-        timestamp: Date.now()
-      });
-      messageInput.value = "";
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #000000, #4b0000);
+        color: #ffd700;
+        line-height: 1.6;
     }
 
-    sendBtn.onclick = () => sendMessage(messageInput.value);
-    messageInput.addEventListener("keypress", (e) => {
-      if(e.key === "Enter") sendMessage(messageInput.value);
-    });
+    a {
+        text-decoration: none;
+        color: #ffd700;
+    }
 
-    // استقبال الرسائل وعرضها
-    const messagesRef = ref(database, "messages");
-    onValue(messagesRef, (snapshot) => {
-      chatBox.innerHTML = "";
-      const data = snapshot.val();
-      if(data) {
-        Object.values(data).forEach(msg => {
-          const div = document.createElement("div");
-          div.classList.add("message");
-          div.innerHTML = `<span class="username">${msg.user}:</span> ${msg.message}`;
-          chatBox.appendChild(div);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
-    });
-  </script>
+    a:hover {
+        color: #ffdd57;
+    }
 
-</body>
-</html>
+    /* container */
+    .container {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    /* الرأس */
+    header {
+        background: linear-gradient(90deg, #220000, #550000);
+        padding: 20px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 2.5em;
+        color: #ffd700;
+        font-weight: bold;
+    }
+
+    /* تأثير متحرك للاسم */
+    .animated-logo {
+        display: inline-block;
+        animation: bounce 2s infinite alternate;
+    }
+
+    @keyframes bounce {
+        0% { transform: translateY(0); color: #ffd700; }
+        50% { transform: translateY(-10px); color: #ffdd57; }
+        100% { transform: translateY(0); color: #ffd700; }
+    }
+
+    /* قائمة التنقل */
+    header nav ul {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        font-weight: bold;
+        font-size: 1.1em;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* قسم الترحيب */
+    .hero {
+        background: linear-gradient(135deg, #1a0000, #330000);
+        text-align: center;
+        padding: 120px 20px;
+        border-bottom-left-radius: 50px;
+        border-bottom-right-radius: 50px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    .hero h2 {
+        font-size: 2.8em;
+    }
+
+    .hero p {
+        font-size: 1.3em;
+    }
+
+    /* قسم الميزات */
+    .features {
+        display: flex;
+        gap: 20px;
+        justify-content: space-around;
+        padding: 60px 20px;
+        flex-wrap: wrap;
+    }
+
+    .feature {
+        background: rgba(255, 215, 0, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        flex: 1 1 250px;
+        text-align: center;
+        transition: transform 0.3s, background 0.3s;
+        border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .feature:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 215, 0, 0.1);
+    }
+
+    /* تذييل الصفحة */
+    footer {
+        text-align: center;
+        padding: 25px;
+        background: #220000;
+        font-size: 0.9em;
+        color: #ffd700;
+    }
+
+    /* استجابة الهواتف */
+    @media (max-width: 768px) {
+        header .container {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        header nav ul {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .features {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
